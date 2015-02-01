@@ -18,11 +18,16 @@ def hash_sections_md5(sections):
     return md5_sections
 
 def hash_sections_sha256(sections):
-    md5_sections= {key: hashlib.sha256(value).hexdigest() for key, value in sections.items()}
+    sha256_sections= {key: hashlib.sha256(value).hexdigest() for key, value in sections.items()}
     return sha256_sections
 
 if __name__ == "__main__":
+
+    """
+    Edit this according to the name of the file you are analyzing
+    """
     filename= '3.exe'
+
     sections= {}
     md5_sections= {}
     sha256_sections= {}
@@ -31,6 +36,13 @@ if __name__ == "__main__":
     md5_sections= hash_sections_md5(sections)
     sha256_sections= hash_sections_sha256(sections)
 
+    print '#. MD5 hashes of each section in '+filename
     for k,v in md5_sections.items():
+        (name, size) = k.split('_')
+        print size+':'+v+':'+'UNKNOWN_'+name
+
+    print
+    print '#. SHA256 hashes of each section in '+filename
+    for k,v in sha256_sections.items():
         (name, size) = k.split('_')
         print size+':'+v+':'+'UNKNOWN_'+name
