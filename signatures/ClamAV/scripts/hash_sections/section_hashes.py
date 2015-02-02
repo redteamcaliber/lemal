@@ -6,6 +6,18 @@ https://www.python.org/dev/peps/pep-0274/
 
 import pefile
 import hashlib
+import argparse
+
+def get_cli_arguments():
+    """
+    Read command line arguments.
+    """
+    parser= argparse.ArgumentParser()
+    parser.add_argument('-m', action="store_true", help='MD5 hashes of all sections')
+    parser.add_argument('-s', action="store_true", help='SHA256 hashes of all sections')
+    args = parser.parse_args()
+
+    return args.m, args.s
 
 def get_sections(filename):
     sections= {}
@@ -32,17 +44,22 @@ if __name__ == "__main__":
     md5_sections= {}
     sha256_sections= {}
 
+    md5, sha256= get_cli_arguments()
     sections= get_sections(filename)
     md5_sections= hash_sections_md5(sections)
     sha256_sections= hash_sections_sha256(sections)
 
-    print '#. MD5 hashes of each section in '+filename
-    for k,v in md5_sections.items():
-        (name, size) = k.split('_')
-        print size+':'+v+':'+'UNKNOWN_'+name
-
-    print
-    print '#. SHA256 hashes of each section in '+filename
-    for k,v in sha256_sections.items():
-        (name, size) = k.split('_')
-        print size+':'+v+':'+'UNKNOWN_'+name
+    if md5 and sha256:
+        print 'Dont try and compute both MD5 and SHA256 hashes'
+        exit(0)
+    elif not md5 and not sha256:
+        print 'Please add either the -m or -s switches to the script'
+        exit(0)
+    elif md5:
+        for k,v in md5_sections.items():
+            (name, size) = k.split('_')
+            print size+':'+v+':'+'UNKNOWN_'+name
+    elif sha256:
+        for k,v in sha256_sections.items():
+            (name, size) = k.split('_')
+            print size+':'+v+':'+'UNKNOWN_'+name
