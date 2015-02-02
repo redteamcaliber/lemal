@@ -10,7 +10,7 @@ import hashlib
 def get_sections(filename):
     sections= {}
     pe= pefile.PE(filename)
-    sections= {section.Name+'_'+str(section.Misc_VirtualSize): section.get_data() for section in pe.sections}
+    sections= {section.Name+'_'+str(section.SizeOfRawData): section.get_data() for section in pe.sections}
     return sections
 
 def hash_sections_md5(sections):
